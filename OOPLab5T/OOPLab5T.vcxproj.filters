@@ -26,5 +26,8 @@
     <ClInclude Include="Lab5Exmaple.h">
       <Filter>Файлы заголовков</Filter>
     </ClInclude>
+    <ClInclude Include="binary_search_tree.h">
+      <Filter>Файлы заголовков</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

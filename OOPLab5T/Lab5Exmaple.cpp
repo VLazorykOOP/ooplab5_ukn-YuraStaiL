@@ -1,6 +1,6 @@
 ﻿#include <iostream>
 #include <queue>
-
+#include <stack>
 
 using namespace std;
 
@@ -69,94 +69,132 @@ public:
 
 //////////////////////////////////////////
 
+#include <iostream>
+#include <queue>
+
+using namespace std;
+
+
 class TreeNode {
 public:
-    int value;
+    int val;
     TreeNode* left;
     TreeNode* right;
 
-    TreeNode(int val) : value(val), left(nullptr), right(nullptr) {}
-    ~TreeNode() {}
+    TreeNode(int x) : val(x), left(NULL), right(NULL) {}
 };
 
 class BinaryTree {
 public:
-    TreeNode* root;
-
-    BinaryTree() : root(nullptr) {}
-    ~BinaryTree() {}
-
-    void insert(int val);
-    void breadthFirstTraversal();
-    void reverseInorderTraversal(TreeNode* node);
-};
-
-void BinaryTree::insert(int val) {
-    if (root == nullptr) {
-        root = new TreeNode(val);
-        return;
+    BinaryTree() {
+        root = NULL;
     }
 
-    TreeNode* curr = root;
-    while (curr != nullptr) {
-        if (val < curr->value) {
-            if (curr->left == nullptr) {
-                curr->left = new TreeNode(val);
-                return;
-            }
-            curr = curr->left;
-        }
-        else if (val > curr->value) {
-            if (curr->right == nullptr) {
-                curr->right = new TreeNode(val);
-                return;
-            }
-            curr = curr->right;
+    void insert(int val) {
+        TreeNode* newNode = new TreeNode(val);
+        if (root == NULL) {
+            root = newNode;
         }
         else {
-            std::cout << "Value " << val << " already exists in the tree." << std::endl;
-            return;
+            TreeNode* currNode = root;
+            TreeNode* parentNode = NULL;
+            while (currNode != NULL) {
+                parentNode = currNode;
+                if (val < currNode->val) {
+                    currNode = currNode->left;
+                }
+                else if (val > currNode->val) {
+                    currNode = currNode->right;
+                }
+                else {
+                    cout << "Value already exists in the tree." << endl;
+                    return;
+                }
+            }
+            if (val < parentNode->val) {
+                parentNode->left = newNode;
+            }
+            else {
+                parentNode->right = newNode;
+            }
         }
     }
-}
 
-void BinaryTree::breadthFirstTraversal() {
-    if (root == nullptr) {
-        return;
+    void preOrder() {
+        preOrderTraversal(root);
     }
 
-    queue<TreeNode*> q;
-    q.push(root);
+    void postOrder() {
+        postOrderTraversal(root);
+    }
 
-    while (!q.empty()) {
-        TreeNode* curr = q.front();
-        q.pop();
+private:
+    TreeNode* root;
 
-        cout << curr->value << " ";
-
-        if (curr->left != nullptr) {
-            q.push(curr->left);
-        }
-
-        if (curr->right != nullptr) {
-            q.push(curr->right);
+    void preOrderTraversal(TreeNode* currNode) {
+        if (currNode != NULL) {
+            cout << currNode->val << " ";
+            preOrderTraversal(currNode->left);
+            preOrderTraversal(currNode->right);
         }
     }
-}
 
-void BinaryTree::reverseInorderTraversal(TreeNode* node) {
-    if (node == nullptr) {
-        return;
+    void postOrderTraversal(TreeNode* currNode) {
+        if (currNode != NULL) {
+            postOrderTraversal(currNode->left);
+            postOrderTraversal(currNode->right);
+            cout << currNode->val << " ";
+        }
+    }
+};
+
+/////////////////////
+
+class String {
+public:
+    String() : str("") { }
+    String(const string& s) : str(s) { }
+    virtual ~String() { }
+
+    virtual void print(ostream& out) const { out << str << " (string)"; }
+    virtual void read(istream& in) { in >> str; }
+
+    String& operator=(const String& other) {
+        if (this != &other) {
+            str = other.str;
+        }
+        return *this;
     }
 
-    reverseInorderTraversal(node->right);
-    cout << node->value << " ";
-    reverseInorderTraversal(node->left);
-}
+    String(const String& other) : str(other.str) { }
 
+protected:
+    string str;
+};
+
+class NumberString : public String {
+public:
+    NumberString() : String("") { }
+    NumberString(const string& s) : String(s) { }
+    ~NumberString() override { }
+
+    void print(ostream& out) const override { out << str << " (number)"; }
+    void read(istream& in) override { in >> str; }
+
+    NumberString& operator=(const NumberString& other) {
+        if (this != &other) {
+            str = other.str;
+        }
+        return *this;
+    }
+
+    NumberString(const NumberString& other) : String(other.str) { }
+};
 
 
 int main() {
+    cout << "Task 1" << endl;
+
     Quadrilateral* q = new Quadrilateral(2, 3, 4, 5);
     q->print();
     cout << "Perimeter: " << q->getPerimeter() << endl;
@@ -176,7 +214,54 @@ int main() {
     delete r;
 
 
-    cout << "Task 2"
+    cout << "Task 2" << endl;
+
+    BinaryTree bt;
+    bt.insert(10);
+    bt.insert(7);
+    bt.insert(2);
+    bt.insert(9);
+    bt.insert(2);
+    bt.insert(6);
+    bt.insert(5);
+    bt.insert(11);
+    bt.insert(1);
+
+    cout << "Pre-order traversal: ";
+    bt.preOrder();
+    cout << endl;
+
+    cout << "Post-order traversal: ";
+    bt.postOrder();
+    cout << endl;
+
+
+    cout << "Task 3" << endl;
+    String s1("Test");
+    s1.print(cout);
+    cout << endl;
+    s1.read(cin);
+    s1.print(cout); // вивів вхідний рядок (string)
+    String s_copy(s1);
+
+    cout << "\ncopy construct(String) -> ";
+    s_copy.print(cout);
+
+    cout << endl << endl;
+
+    NumberString s2("123");
+    s2.print(cout); // надрукував "123 (number)"
+    cout << endl;
+
+    
+
+    s2.read(cin);
+    s2.print(cout);
+    cout << endl;
+    NumberString s2_copy(s2);
+
+    cout << "copy construct(String) -> ";
+    s2_copy.print(cout);
 
     return 0;
 }
